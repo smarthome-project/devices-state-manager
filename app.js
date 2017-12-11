@@ -8,9 +8,12 @@ const config = require('./config')
 
 var app = express() 
 
-app.get('*', function(req, res){
-	res.send('server')
-})
+var socket = require('socket.io-client')('http://localhost:3300', {reconnect: true})
+
+// Add a connect listener
+socket.on('connect', function (socket) {
+    console.log('Connected!');
+});
 
 process.on('SIGINT', () => {
     devicesRouter.deinitArduino((res) => {
