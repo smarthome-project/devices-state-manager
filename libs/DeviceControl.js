@@ -78,7 +78,7 @@ class DeviceControler {
 
 		this.port.write(	data, function () {
 			this.port.drain( function() {
-
+				console.log(data)
 			})
 		})
 	}
