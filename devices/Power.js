@@ -18,6 +18,10 @@ class Power {
 	setActive(active) {
 		this.DeviceControler.setDeviceActive(this.inputId, active)
 	}
+
+	getStatus() {
+		return this.DeviceControler.getDeviceStatus(this.inputId)
+	}
 }
 
 module.exports = Power

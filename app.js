@@ -49,6 +49,8 @@ function createDevice(inputId, device) {
 	switch(device.type) {
 		case "power":
 			DevicesMap[inputId] = new Power(deviceControler, inputId,device.shift_id, device.state)
+			console.log(DevicesMap[inputId].getDeviceStatus())
+
 	}
 }
 
