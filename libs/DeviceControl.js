@@ -14,10 +14,11 @@ class DeviceControler {
 			if(!err) {
 				ports.forEach((device) => {
 					if(device.manufacturer && device.manufacturer.toLowerCase().indexOf("arduino") !== -1) {
-						port = new this.SerialPort(device.comName, {
+						console.log("arduino FOUND!")
+						this.port = new this.SerialPort(device.comName, {
 							parser: this.SerialPort.parsers.readline('\n')
 						})
-						port.on('data', function (data) {
+						this.port.on('data', function (data) {
 							console.log('Data: ' + data)
 						})
 					}
@@ -36,7 +37,7 @@ class DeviceControler {
 	}
 
 	deinitArduino (callback) {
-		port.close(() => {
+		this.port.close(() => {
 			callback(true)
 		})
 	}
@@ -44,8 +45,8 @@ class DeviceControler {
 	initDevice(id, pwm, pin1, pin2, pin3) {
 		//to do do some checks
 		let data = 'deviceInit(' + id + ',' + pwm + ',' + pin1 + ',' + pin2 + ',' + pin3+ ');'
-		port.write(data, () => {
-			port.drain(() => {
+		this.port.write(data, () => {
+			this.port.drain(() => {
 
 			})
 		})
@@ -54,8 +55,8 @@ class DeviceControler {
 	setLightsState(id, R, G, B, time) {
 		let data = 'ledTime(' + id + ',' + R + ':' + G + ':' + B + ',' + time + ');'
 
-		port.write(	data, function () {
-			port.drain( function() {
+		this.port.write(	data, function () {
+			this.port.drain( function() {
 				res.json(data).status(200).end()
 			})
 		})
@@ -75,8 +76,8 @@ class DeviceControler {
 	getDeviceStatus (id) {
 		let data = 'showDevice(' + id + ');'
 
-		port.write(	data, function () {
-			port.drain( function() {
+		this.port.write(	data, function () {
+			this.port.drain( function() {
 
 			})
 		})
