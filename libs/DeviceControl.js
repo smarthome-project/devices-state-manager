@@ -5,7 +5,7 @@ class DeviceControler {
 		this.SerialPort  		 = SerialPort
 		this.socket 			 = socket
 		this.shiftregister_state = shiftregister_state
-		this.port 				 =  this.initArduino()
+		this.initArduino()
 	}
 
 	initArduino () {
