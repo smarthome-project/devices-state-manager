@@ -5,23 +5,30 @@ class DeviceControler {
 		this.SerialPort  		 = SerialPort
 		this.socket 			 = socket
 		this.shiftregister_state = shiftregister_state
-		this.port 				 =  initArduino()
+		this.port 				 =  this.initArduino()
 	}
 
 	initArduino () {
-		SerialPort.list(function (err, ports) {
+		this.SerialPort.list( (err, ports) => {
+			let port = undefined
 			if(!err) {
 				ports.forEach((device) => {
 					if(device.manufacturer && device.manufacturer.toLowerCase().indexOf("arduino") !== -1) {
-						port = new SerialPort(device.comName, {
-							parser: SerialPort.parsers.readline('\n')
+						port = new this.SerialPort(device.comName, {
+							parser: this.SerialPort.parsers.readline('\n')
 						})
 						port.on('data', function (data) {
 							console.log('Data: ' + data)
 						})
-						return port
 					}
 				})
+				if (port) 
+					return port
+				else {
+					console.log("no port")
+					this.socket.emit("noPort","can't find arduino")
+				}
+
 			} else {
 				console.log("Cannot load SerialPort.")
 			}
@@ -39,8 +46,7 @@ class DeviceControler {
 		let data = 'deviceInit(' + id + ',' + pwm + ',' + pin1 + ',' + pin2 + ',' + pin3+ ');'
 		port.write(data, () => {
 			port.drain(() => {
-				//TO DO CHANGE STATE EMIT 
-				////res.status(201).end()
+
 			})
 		})
 	}
@@ -59,9 +65,9 @@ class DeviceControler {
 
 		let data = 'enable(' + id + ',' + enable + ');'
 
-		port.write(	data, function () {
-			port.drain( function() {
-				//res.json(data).status(200).end()
+		this.port.write(	data, function () {
+			this.port.drain( function() {
+
 			})
 		})
 	}
@@ -71,7 +77,7 @@ class DeviceControler {
 
 		port.write(	data, function () {
 			port.drain( function() {
-				//res.json(data).status(200).end()
+
 			})
 		})
 	}
@@ -80,7 +86,7 @@ class DeviceControler {
 		if(id < 0 || id > 15) {
 			//bad id 
 		} else {
-			shiftregister_state[id] = (enable == 'true') ? 1 : 0
+			this.shiftregister_state[id] = (enable == 'true') ? 1 : 0
 
 			//get those pins from constructor
 
@@ -89,7 +95,7 @@ class DeviceControler {
 			clock = 16
 			latch = 18
 
-			let states = shiftregister_state.slice()
+			let states = this.shiftregister_state.slice()
 			let args = [data, clock, latch].concat(states.reverse())
 
 			let options = {
@@ -97,12 +103,10 @@ class DeviceControler {
 				args: args
 			}
 
-			PythonShell.run('shiftregister.py', options, (err, results) => {
+			this.PythonShell.run('shiftregister.py', options, (err, results) => {
 				if (err) {
-					//res.status(404).end()
 					throw err
 				}
-				res.json(results)
 			})
 		}	
 	}
@@ -141,9 +145,10 @@ class DeviceControler {
 		PythonShell.run('my_script.py', options, (err, results) => {
 			if (err) throw err
 			console.log('results: %j', results)
-			//res.json(results)
+
 		})
 	}
 }
 //END OF CLASS
 
+module.exports = DeviceControler
