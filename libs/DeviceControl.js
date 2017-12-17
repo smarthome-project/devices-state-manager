@@ -5,35 +5,10 @@ class DeviceControler {
 		this.SerialPort  		 = SerialPort
 		this.socket 			 = socket
 		this.shiftregister_state = shiftregister_state
-		this.initArduino()
 	}
 
-	initArduino () {
-		this.SerialPort.list( (err, ports) => {
-			let port = undefined
-			if(!err) {
-				ports.forEach((device) => {
-					if(device.manufacturer && device.manufacturer.toLowerCase().indexOf("arduino") !== -1) {
-						console.log("arduino FOUND!")
-						this.port = new this.SerialPort(device.comName, {
-							parser: this.SerialPort.parsers.readline('\n')
-						})
-						this.port.on('data', function (data) {
-							console.log('Data: ' + data)
-						})
-					}
-				})
-				if (port) 
-					return port
-				else {
-					console.log("no port")
-					this.socket.emit("noPort","can't find arduino")
-				}
-
-			} else {
-				console.log("Cannot load SerialPort.")
-			}
-		})
+	setPort(port) {
+		this.port = port
 	}
 
 	deinitArduino (callback) {
@@ -45,6 +20,7 @@ class DeviceControler {
 	initDevice(id, pwm, pin1, pin2, pin3) {
 		//to do do some checks
 		let data = 'deviceInit(' + id + ',' + pwm + ',' + pin1 + ',' + pin2 + ',' + pin3+ ');'
+		console.log("init Device data: ", data)
 		this.port.write(data, () => {
 			this.port.drain(() => {
 
@@ -55,8 +31,8 @@ class DeviceControler {
 	setLightsState(id, R, G, B, time) {
 		let data = 'ledTime(' + id + ',' + R + ':' + G + ':' + B + ',' + time + ');'
 
-		this.port.write(	data, function () {
-			this.port.drain( function() {
+		this.port.write(	data,  () => {
+			this.port.drain( () =>{
 				res.json(data).status(200).end()
 			})
 		})
@@ -66,8 +42,8 @@ class DeviceControler {
 
 		let data = 'enable(' + id + ',' + enable + ');'
 
-		this.port.write(	data, function () {
-			this.port.drain( function() {
+		this.port.write(	data,  () => {
+			this.port.drain( () =>{
 
 			})
 		})
@@ -75,16 +51,16 @@ class DeviceControler {
 
 	getDeviceStatus (id) {
 		let data = 'showDevice(' + id + ');'
-
-		this.port.write(	data, function () {
-			this.port.drain( function() {
-				console.log(data)
+		this.port.write(	data,  () => {
+			this.port.drain( () =>{
+				//console.log(data)
 			})
 		})
 	}
 
 	shiftregister(id, enable) {
-		if(id < 0 || id > 15) {
+		console.log("shiftregister MOCK !!")
+/*		if(id < 0 || id > 15) {
 			//bad id 
 		} else {
 			this.shiftregister_state[id] = (enable == 'true') ? 1 : 0
@@ -109,7 +85,7 @@ class DeviceControler {
 					throw err
 				}
 			})
-		}	
+		}*/	
 	}
 
 	spin(id, direction) {

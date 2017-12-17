@@ -3,7 +3,7 @@ class LedRGB {
 	constructor(DeviceControler, id, pwm, pin1, pin2, pin3) {
 		this.DeviceControler = DeviceControler
 		this.inputId = id
-		this.pwm = pwm
+		this.pwm = (pwm >0)? true:false
 		this.pin1 = pin1
 		this.pin2 = pin2
 		this.pin3 = pin3
