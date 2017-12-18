@@ -1,14 +1,43 @@
 class DeviceControler {
 
-	constructor(PythonShell, SerialPort, socket, shiftregister_state = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] ){
+	constructor(PythonShell, SerialPort, socket, fork, shiftregister_state = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] ){
 		this.PythonShell 		 = PythonShell
 		this.SerialPort  		 = SerialPort
 		this.socket 			 = socket
 		this.shiftregister_state = shiftregister_state
+		this.ready               = false
+		this.runing              = false
+		this.commands            = []
 	}
 
 	setPort(port) {
 		this.port = port
+		this.socket.emit("getDevices")
+	}
+
+	setReady(ready) {
+		this.ready = ready
+	}
+
+	procesJob() {
+		console.log("procesJob", this.ready)
+		if (this.ready) {
+			this.runing = true
+			let job = this.commands.pop()
+			console.log("take next job ", job)
+			if (job) {
+				console.log("procesing job: ", job)
+				this.port.write(	job,  () => {
+					this.port.drain( () => {
+						console.log("drain")
+						this.runing = false
+						this.procesJob()
+					})
+				})
+			} else {
+				this.runing = false
+			}
+		}
 	}
 
 	deinitArduino (callback) {
@@ -21,11 +50,13 @@ class DeviceControler {
 		//to do do some checks
 		let data = 'deviceInit(' + id + ',' + pwm + ',' + pin1 + ',' + pin2 + ',' + pin3+ ');'
 		console.log("init Device data: ", data)
-		this.port.write(data, () => {
+/*		this.port.write(data, () => {
 			this.port.drain(() => {
 
 			})
-		})
+		})*/
+		this.commands.push(data)
+		this.procesJob()
 	}
 
 	setLightsState(id, R, G, B, time) {

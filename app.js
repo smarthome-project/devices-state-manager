@@ -4,6 +4,8 @@ const _ 		   = require('lodash')
 const PythonShell  = require('python-shell')
 const SerialPort   = require("serialport")
 
+const { fork } = require('child_process');
+
 const DeviceControler = require('./libs/DeviceControl.js')
 const Power           = require('./devices/Power.js')
 const LedRGB           = require('./devices/LedRGB.js')
@@ -13,20 +15,18 @@ const config = require('./config')
 
 var app = express()
 
-
 var DevicesMap = {} 
 var deviceControler = undefined
 
 var io = require('socket.io-client')('http://localhost:3300', {reconnect: true, query: "Type=controler"})
 // Add a connect listener
 
-deviceControler = new DeviceControler(PythonShell, SerialPort, io)
+deviceControler = new DeviceControler(PythonShell, SerialPort, io, fork)
 initArduino(deviceControler)
 
 io.on('connect', function (socket) {
 	console.log('Connected!')
-	
-	io.emit("getDevices")
+
 	io.on("allDevicesData", devices => {
 		for (var inputId in devices) {
 			createDevice(inputId, devices[inputId])
@@ -44,6 +44,7 @@ io.on('connect', function (socket) {
 	})
 
 	io.on("initDevice", (device) => {
+		console.log("initdevice")
 		createDevice(device.pin_settings_id, device)
 	})
 
@@ -52,11 +53,8 @@ io.on('connect', function (socket) {
 	})
 
 	io.on("testInit", () => {
-		deviceControler.port.write("deviceInit(2,true,22,23,24);", () => {
-			deviceControler.port.drain(() => {
-
-			})
-		})
+		console.log("test INIT")
+		deviceControler.commands.push("deviceInit(2,true,22,23,24);")
 	})
 })
 
@@ -89,7 +87,10 @@ process.on('SIGINT', () => {
 
 app.listen(config.port, function(){
 	console.log('Server started on ',config.port)
+	//setInterval(function(){deviceControler.procesJob()},1000)
 })
+
+
 
 function initArduino (controler) {
 	let port
@@ -100,11 +101,27 @@ function initArduino (controler) {
 					console.log("arduino FOUND!")
 					const Readline = SerialPort.parsers.Readline
 
-					port = new SerialPort(device.comName)
+					port = new SerialPort(device.comName, { autoOpen: false })
+
+					port.open(function (err) {
+						if (err) 
+							return console.log('Error opening port: ', err.message)
+					})
+
+					port.on('error', function(err) {
+						console.log('SerialPort Error: ', err.message)
+					})
+					
 					parser = port.pipe(new Readline())
 					parser.on('data', (data) => {
-						console.log("data form arduino: ", data)
+						if (data.indexOf("READY") !== -1) {
+							console.log("setting true")
+							controler.setReady(true)
+							controler.procesJob()
+						}
+						console.log(data)
 					})
+
 					controler.setPort(port)
 					console.log("set PORT")
 				}
