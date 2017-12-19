@@ -61,32 +61,24 @@ class DeviceControler {
 
 	setLightsState(id, R, G, B, time) {
 		let data = 'ledTime(' + id + ',' + R + ':' + G + ':' + B + ',' + time + ');'
-
-		this.port.write(	data,  () => {
-			this.port.drain( () =>{
-				res.json(data).status(200).end()
-			})
-		})
+		console.log(data)
+		
+		this.commands.push(data)
+		this.procesJob()
 	}
 
 	setDeviceActive(id, enable) {
 
 		let data = 'enable(' + id + ',' + enable + ');'
 
-		this.port.write(	data,  () => {
-			this.port.drain( () =>{
-
-			})
-		})
+		this.commands.push(data)
+		this.procesJob()
 	}
 
 	getDeviceStatus (id) {
 		let data = 'showDevice(' + id + ');'
-		this.port.write(	data,  () => {
-			this.port.drain( () =>{
-				//console.log(data)
-			})
-		})
+		this.commands.push(data)
+		this.procesJob()
 	}
 
 	shiftregister(id, enable) {
