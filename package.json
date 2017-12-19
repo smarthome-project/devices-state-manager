@@ -1,0 +1,31 @@
+{
+  "name": "devices-state-manager",
+  "version": "1.0.0",
+  "description": "device manager for smarthome project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smarthome-project/devices-state-manager.git"
+  },
+  "keywords": [
+    "device",
+    "manager"
+  ],
+  "author": "Przemyslaw Jozwik",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/smarthome-project/devices-state-manager/issues"
+  },
+  "homepage": "https://github.com/smarthome-project/devices-state-manager#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "lodash": "^4.17.4",
+    "python-shell": "^0.4.0",
+    "sequelize": "^4.28.0",
+    "serialport": "^6.0.4",
+    "socket.io": "^2.0.4"
+  }
+}
