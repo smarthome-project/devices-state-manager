@@ -34,42 +34,39 @@ io.on('connect', function (socket) {
 		}
 	})
 
-	io.on("changeState", ({id, state}) => {
-		DevicesMap[id].setState(state)
+	io.on("changeState", ({id, state, time = null}) => {
+		if(time)
+			state.time = time
+		if(DevicesMap[id])
+			DevicesMap[id].setState(state)
 	})
 
 	io.on("removeDevice", (id) => {
-		DevicesMap[id].setActive(false)
-		delete DevicesMap[id]
+		if(DevicesMap[id]) {
+			DevicesMap[id].setActive(false)
+			delete DevicesMap[id]
+		}
 	})
 
 	io.on("initDevice", (device) => {
-		console.log("initdevice")
 		createDevice(device.pin_settings_id, device)
 	})
 
 	io.on("getDeviceStatus", (id) => {
-		DevicesMap[id].getStatus()
+		if(DevicesMap[id])
+			DevicesMap[id].getStatus()
 	})
 
-	io.on("testInit", () => {
-		console.log("test INIT")
-		deviceControler.commands.push("deviceInit(2,true,22,23,24);")
-	})
 })
-
 
 function createDevice(inputId, device) {
 	switch(device.type) {
-		case "power":
+		case "POWER":
 			DevicesMap[inputId] = new Power(deviceControler, inputId, device.shift_id, device.state)
-			//console.log(DevicesMap[inputId].getStatus())
 	    	break
-	    case "ledrgb":
-	    	console.log("TO DO INIT VALUES !!!")
-	        DevicesMap[inputId] = new LedRGB(deviceControler, inputId, true, 22, 23, 24, 25)
+	    case "LEDRGB":
+	        DevicesMap[inputId] = new LedRGB(deviceControler, inputId, device.pwm, device.pin1, device.pin2, device.pin3)
 	        break
-
 	}
 }
 
