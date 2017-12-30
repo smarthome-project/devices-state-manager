@@ -9,8 +9,8 @@ class Power {
 
 	setState(state) {
 		this.state = state
-		let ON = (this.state.Active)? true:false
-		this.DeviceControler.shiftregister(this.shiftId, ON)
+		let ON = (this.state.Active)? 1:0
+		this.DeviceControler.shiftOne(this.shiftId, ON)
 	}
 
 	setActive(active) {
