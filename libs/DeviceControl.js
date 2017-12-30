@@ -81,34 +81,19 @@ class DeviceControler {
 		this.procesJob()
 	}
 
-	shiftregister(id, enable) {
-		console.log("shiftregister MOCK !!")
-/*		if(id < 0 || id > 15) {
-			//bad id 
-		} else {
-			this.shiftregister_state[id] = (enable == 'true') ? 1 : 0
+	shiftOne(id, enable) {
+		let state = (enable)?"1":"0"
+		let data = `shiftOne(${id},${state});`
+		this.commands.push(data)
+		this.procesJob()
+	}
 
-			//get those pins from constructor
-
-			let data, clock, latch
-			data = 12
-			clock = 16
-			latch = 18
-
-			let states = this.shiftregister_state.slice()
-			let args = [data, clock, latch].concat(states.reverse())
-
-			let options = {
-				scriptPath: 'scripts',
-				args: args
-			}
-
-			this.PythonShell.run('shiftregister.py', options, (err, results) => {
-				if (err) {
-					throw err
-				}
-			})
-		}*/	
+	shiftInit(state) {
+		console.log(state)
+		let data = `initRegister(${state});`
+		console.log(data)
+		this.commands.push(data)
+		this.procesJob()
 	}
 
 	spin(id, direction) {

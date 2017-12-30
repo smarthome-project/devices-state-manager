@@ -27,6 +27,13 @@ initArduino(deviceControler)
 io.on('connect', function (socket) {
 	console.log('Connected!')
 
+	io.emit("getRegister")
+	io.emit("getDevices")
+
+	io.on("initRegister", state => {
+		deviceControler.shiftInit(state)
+	})
+
 	io.on("allDevicesData", devices => {
 		for (var inputId in devices) {
 			createDevice(inputId, devices[inputId])

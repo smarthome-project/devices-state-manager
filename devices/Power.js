@@ -5,8 +5,6 @@ class Power {
 		this.inputId = id
 		this.shiftId= shiftId
 		this.state = state
-		//check stat name
-		this.DeviceControler.shiftregister(this.shiftId, this.state.Active)
 	}
 
 	setState(state) {
