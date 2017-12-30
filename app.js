@@ -28,7 +28,6 @@ io.on('connect', function (socket) {
 	console.log('Connected!')
 
 	io.emit("getRegister")
-	io.emit("getDevices")
 
 	io.on("initRegister", state => {
 		deviceControler.shiftInit(state)
@@ -37,15 +36,20 @@ io.on('connect', function (socket) {
 	io.on("allDevicesData", devices => {
 		for (var inputId in devices) {
 			createDevice(inputId, devices[inputId])
-			console.log("creatingDevices")
+		}
+		for (var inputId in devices) {
+			if (devices[inputId].type != "POWER") {
+				DevicesMap[inputId].setState(devices[inputId].state)
+			}
 		}
 	})
 
 	io.on("changeState", ({id, state, time = null}) => {
 		if(time)
 			state.time = time
-		if(DevicesMap[id])
+		if(DevicesMap[id]) {
 			DevicesMap[id].setState(state)
+		}
 	})
 
 	io.on("removeDevice", (id) => {
@@ -91,7 +95,7 @@ process.on('SIGINT', () => {
 
 app.listen(config.port, function(){
 	console.log('Server started on ',config.port)
-	//setInterval(function(){deviceControler.procesJob()},1000)
+	setInterval(function(){deviceControler.procesJob()},2000)
 })
 
 
@@ -118,12 +122,11 @@ function initArduino (controler) {
 					
 					parser = port.pipe(new Readline())
 					parser.on('data', (data) => {
+						console.log("data from arduino " , data)
 						if (data.indexOf("READY") !== -1) {
 							console.log("setting true")
 							controler.setReady(true)
-							controler.procesJob()
 						}
-						console.log(data)
 					})
 
 					controler.setPort(port)

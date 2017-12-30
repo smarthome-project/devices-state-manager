@@ -21,9 +21,10 @@ class DeviceControler {
 
 	procesJob() {
 		console.log("procesJob", this.ready)
-		if (this.ready) {
+		if (this.ready && !this.runing) {
 			this.runing = true
-			let job = this.commands.pop()
+			let job = this.commands[0]
+			this.commands.shift()
 			console.log("take next job ", job)
 			if (job) {
 				console.log("procesing job: ", job)
@@ -31,7 +32,7 @@ class DeviceControler {
 					this.port.drain( () => {
 						console.log("drain")
 						this.runing = false
-						this.procesJob()
+			
 					})
 				})
 			} else {
@@ -48,7 +49,8 @@ class DeviceControler {
 
 	initDevice(id, pwm, pin1, pin2, pin3) {
 		//to do do some checks
-		let data = 'deviceInit(' + id + ',' + pwm + ',' + pin1 + ',' + pin2 + ',' + pin3+ ');'
+		let PWM = (pwm)? 'true':'false'
+		let data = 'deviceInit(' + id + ',' + PWM + ',' + pin1 + ',' + pin2 + ',' + pin3+ ');'
 		console.log("init Device data: ", data)
 /*		this.port.write(data, () => {
 			this.port.drain(() => {
@@ -56,7 +58,6 @@ class DeviceControler {
 			})
 		})*/
 		this.commands.push(data)
-		this.procesJob()
 	}
 
 	setLightsState(id, R, G, B, time) {
@@ -64,7 +65,6 @@ class DeviceControler {
 		console.log(data)
 		
 		this.commands.push(data)
-		this.procesJob()
 	}
 
 	setDeviceActive(id, enable) {
@@ -72,28 +72,24 @@ class DeviceControler {
 		let data = 'enable(' + id + ',' + enable + ');'
 
 		this.commands.push(data)
-		this.procesJob()
 	}
 
 	getDeviceStatus (id) {
 		let data = 'showDevice(' + id + ');'
 		this.commands.push(data)
-		this.procesJob()
 	}
 
 	shiftOne(id, enable) {
 		let state = (enable)?"1":"0"
-		let data = `shiftOne(${id},${state});`
+		let data = `shiftOne(${id},${state})`
 		this.commands.push(data)
-		this.procesJob()
 	}
 
 	shiftInit(state) {
 		console.log(state)
-		let data = `initRegister(${state});`
+		let data = `initRegister(${state})`
 		console.log(data)
 		this.commands.push(data)
-		this.procesJob()
 	}
 
 	spin(id, direction) {

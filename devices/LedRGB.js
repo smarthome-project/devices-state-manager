@@ -11,16 +11,16 @@ class LedRGB {
 	}
 
 	setState(state) {
-
+		console.log("seting State")
 		this.state = state
+		if (this.state.rgb) {
+			const R =   parseInt(this.state.rgb.substr(1, 2), 16)
+			const G =   parseInt(this.state.rgb.substr(3, 2), 16)
+			const B =   parseInt(this.state.rgb.substr(5, 2), 16)
 
-		const R =   parseInt(this.state.rgb.substr(1, 2), 16)
-		const G =   parseInt(this.state.rgb.substr(3, 2), 16)
-		const B =   parseInt(this.state.rgb.substr(5, 2), 16)
-
-		const time = (this.state.time > 1500)? this.state.time : 1500 
-		this.DeviceControler.setLightsState(this.inputId, R, G, B, time)
-
+			const time = (this.state.time > 1500)? this.state.time : 1500 
+			this.DeviceControler.setLightsState(this.inputId, R, G, B, time)	
+		}
 	}
 
 	setActive(active) {
