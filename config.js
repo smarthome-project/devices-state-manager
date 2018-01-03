@@ -3,7 +3,7 @@
 module.exports = {
 
     'secret': 'jn097aoifsno5675gnapn244454',
-    'port': 3333,
+    'port': 3334,
     'db_conn': {
     	host     : '127.0.0.1',
 		user     : 'SmartHome',
