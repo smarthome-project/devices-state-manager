@@ -18,7 +18,7 @@ var app = express()
 var DevicesMap = {} 
 var deviceControler = undefined
 
-var io = require('socket.io-client')('http://localhost:3300', {reconnect: true, query: "Type=controler"})
+var io = require('socket.io-client')('http://localhost:3376', {reconnect: true, query: "Type=controler"})
 // Add a connect listener
 
 deviceControler = new DeviceControler(PythonShell, SerialPort, io, fork)
