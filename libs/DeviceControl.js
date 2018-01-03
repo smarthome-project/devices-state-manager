@@ -26,13 +26,14 @@ class DeviceControler {
 			let job = this.commands[0]
 			this.commands.shift()
 			console.log("take next job ", job)
+			console.log("take job ", job)
 			if (job) {
+				this.ready = false
 				console.log("procesing job: ", job)
 				this.port.write(	job,  () => {
 					this.port.drain( () => {
 						console.log("drain")
 						this.runing = false
-			
 					})
 				})
 			} else {
@@ -48,20 +49,17 @@ class DeviceControler {
 	}
 
 	initDevice(id, pwm, pin1, pin2, pin3) {
+		console.log("init device " + id)
 		//to do do some checks
 		let PWM = (pwm)? 'true':'false'
-		let data = 'deviceInit(' + id + ',' + PWM + ',' + pin1 + ',' + pin2 + ',' + pin3+ ');'
+		let data = 'in(' + id + ',' + PWM + ',' + pin1 + ',' + pin2 + ',' + pin3+ ');'
 		console.log("init Device data: ", data)
-/*		this.port.write(data, () => {
-			this.port.drain(() => {
-
-			})
-		})*/
 		this.commands.push(data)
 	}
 
 	setLightsState(id, R, G, B, time) {
-		let data = 'ledTime(' + id + ',' + R + ':' + G + ':' + B + ',' + time + ');'
+		console.log("lights")
+		let data = 'lt(' + id + ',' + R + ':' + G + ':' + B + ',' + time + ');'
 		console.log(data)
 		
 		this.commands.push(data)
@@ -69,27 +67,32 @@ class DeviceControler {
 
 	setDeviceActive(id, enable) {
 
-		let data = 'enable(' + id + ',' + enable + ');'
+		let data = 'e(' + id + ',' + enable + ');'
 
 		this.commands.push(data)
 	}
 
 	getDeviceStatus (id) {
-		let data = 'showDevice(' + id + ');'
+		let data = 'sd(' + id + ');'
 		this.commands.push(data)
 	}
 
 	shiftOne(id, enable) {
+		console.log("shiftOne")
 		let state = (enable)?"1":"0"
-		let data = `shiftOne(${id},${state})`
+		let data = `so(${id},${state})`
 		this.commands.push(data)
 	}
 
 	shiftInit(state) {
-		console.log(state)
-		let data = `initRegister(${state})`
-		console.log(data)
+		console.log("shift init")
+		let data = `ir(${state})`
 		this.commands.push(data)
+	}
+
+	setSecure(enable) {
+		let val = (enable == "true" || enable == 1)? "true":"false"
+		let data = `sec(${val});`
 	}
 
 	spin(id, direction) {

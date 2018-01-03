@@ -29,8 +29,6 @@ class LedCW {
 	getStatus() {
 		return this.DeviceControler.getDeviceStatus(this.inputId)
 	}
-
-
 }
 
 module.exports = LedCW

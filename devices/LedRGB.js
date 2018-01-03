@@ -18,7 +18,7 @@ class LedRGB {
 			const G =   parseInt(this.state.rgb.substr(3, 2), 16)
 			const B =   parseInt(this.state.rgb.substr(5, 2), 16)
 
-			const time = (this.state.time > 1500)? this.state.time : 1500 
+			const time = (this.state.time > 1500)? this.state.time : 500 
 			this.DeviceControler.setLightsState(this.inputId, R, G, B, time)	
 		}
 	}

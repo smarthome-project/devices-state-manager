@@ -95,7 +95,7 @@ process.on('SIGINT', () => {
 
 app.listen(config.port, function(){
 	console.log('Server started on ',config.port)
-	setInterval(function(){deviceControler.procesJob()},2000)
+	setInterval(function(){deviceControler.procesJob()},100)
 })
 
 
@@ -123,8 +123,8 @@ function initArduino (controler) {
 					parser = port.pipe(new Readline())
 					parser.on('data', (data) => {
 						console.log("data from arduino " , data)
-						if (data.indexOf("READY") !== -1) {
-							console.log("setting true")
+						if (data.indexOf("R") !== -1) {
+							console.log("job done")
 							controler.setReady(true)
 						}
 					})
