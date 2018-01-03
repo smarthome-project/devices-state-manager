@@ -29,6 +29,8 @@ io.on('connect', function (socket) {
 
 	io.emit("getRegister")
 
+	io.emit("getSecured")
+
 	io.on("initRegister", state => {
 		deviceControler.shiftInit(state)
 	})
@@ -68,6 +70,10 @@ io.on('connect', function (socket) {
 			DevicesMap[id].getStatus()
 	})
 
+	io.on("setSecured", (state) => {
+		console.log("secured", state)
+		deviceControler.setSecure(state)
+	})
 })
 
 function createDevice(inputId, device) {
@@ -126,6 +132,8 @@ function initArduino (controler) {
 						if (data.indexOf("R") !== -1) {
 							console.log("job done")
 							controler.setReady(true)
+						} else if (data.indexOf("ALARM") !== -1){
+							io.emit("alarm")
 						}
 					})
 
