@@ -12,7 +12,7 @@ class DeviceControler {
 
 	setPort(port) {
 		this.port = port
-		this.socket.emit("getDevices")
+		//this.socket.emit("getDevices")
 	}
 
 	setReady(ready) {
@@ -20,13 +20,10 @@ class DeviceControler {
 	}
 
 	procesJob() {
-		console.log("procesJob", this.ready)
 		if (this.ready && !this.runing) {
 			this.runing = true
 			let job = this.commands[0]
 			this.commands.shift()
-			console.log("take next job ", job)
-			console.log("take job ", job)
 			if (job) {
 				this.ready = false
 				console.log("procesing job: ", job)
@@ -52,6 +49,10 @@ class DeviceControler {
 		console.log("init device " + id)
 		//to do do some checks
 		let PWM = (pwm)? 'true':'false'
+		pin1 = pin1? pin1 : 0
+		pin2 = pin2? pin2 : 0
+		pin3 = pin3? pin3 : 0
+
 		let data = 'in(' + id + ',' + PWM + ',' + pin1 + ',' + pin2 + ',' + pin3+ ');'
 		console.log("init Device data: ", data)
 		this.commands.push(data)

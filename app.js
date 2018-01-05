@@ -31,6 +31,8 @@ io.on('connect', function (socket) {
 
 	io.emit("getSecured")
 
+	io.emit("getDevices")
+
 	io.on("initRegister", state => {
 		deviceControler.shiftInit(state)
 	})
@@ -47,6 +49,7 @@ io.on('connect', function (socket) {
 	})
 
 	io.on("changeState", ({id, state, time = null}) => {
+		console.log("requested change",id,state,time)
 		if(time)
 			state.time = time
 		if(DevicesMap[id]) {
@@ -84,6 +87,9 @@ function createDevice(inputId, device) {
 	    case "LEDRGB":
 	        DevicesMap[inputId] = new LedRGB(deviceControler, inputId, device.pwm, device.pin1, device.pin2, device.pin3)
 	        break
+	    case "LEDCW":
+	    	DevicesMap[inputId] = new LedWhite(deviceControler, inputId, device.pwm, device.pin1, device.pin2, device.pin3)
+	    	break
 	}
 }
 

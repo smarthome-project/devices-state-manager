@@ -13,9 +13,9 @@ class LedCW {
 	setState(state) {
 		console.log("seting State")
 		this.state = state
-		if (this.state.rgb) {
-			const C =   parseInt(this.state.rgb.substr(1, 2), 16)
-			const W =   parseInt(this.state.rgb.substr(3, 2), 16)
+		if (this.state.cw) {
+			const C =   parseInt(this.state.cw.substr(1, 2), 16)
+			const W =   parseInt(this.state.cw.substr(3, 2), 16)
 
 			const time = (this.state.time > 1500)? this.state.time : 500 
 			this.DeviceControler.setLightsState(this.inputId, C, W, 0, time)	
