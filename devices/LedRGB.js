@@ -7,6 +7,7 @@ class LedRGB {
 		this.pin1 = pin1
 		this.pin2 = pin2
 		this.pin3 = pin3
+		console.log("initing device")
 		this.DeviceControler.initDevice(this.inputId, this.pwm, this.pin1, this.pin2, this.pin3)
 	}
 

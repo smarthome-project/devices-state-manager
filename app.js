@@ -33,6 +33,11 @@ io.on('connect', function (socket) {
 
 	io.emit("getDevices")
 
+})
+
+io.once('connect', function (socket) {
+
+
 	io.on("initRegister", state => {
 		deviceControler.shiftInit(state)
 	})
@@ -77,9 +82,16 @@ io.on('connect', function (socket) {
 		console.log("secured", state)
 		deviceControler.setSecure(state)
 	})
+
+})
+
+
+io.on('disconnect', function () {
+   console.log('disconnect client event....');
 })
 
 function createDevice(inputId, device) {
+	console.log(device.type)
 	switch(device.type) {
 		case "POWER":
 			DevicesMap[inputId] = new Power(deviceControler, inputId, device.shift_id, device.state)
